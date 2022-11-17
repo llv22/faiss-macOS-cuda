@@ -244,7 +244,11 @@ void GpuIndexFlat::reconstruct(Index::idx_t key, float* out) const {
 
     FAISS_THROW_IF_NOT_FMT(
             key < this->ntotal,
+#if defined(__APPLE__) && defined(__MACH__)
+            "index %lld out of bounds (ntotal %lld)",
+#else
             "index %zu out of bounds (ntotal %zu)",
+#endif
             key,
             this->ntotal);
     auto stream = resources_->getDefaultStream(config_.device);
@@ -275,17 +279,29 @@ void GpuIndexFlat::reconstruct_n(Index::idx_t i0, Index::idx_t n, float* out)
 
     FAISS_THROW_IF_NOT_FMT(
             i0 < this->ntotal,
+#if defined(__APPLE__) && defined(__MACH__)
+            "start index (%lld) out of bounds (ntotal %lld)",
+#else
             "start index (%zu) out of bounds (ntotal %zu)",
+#endif
             i0,
             this->ntotal);
     FAISS_THROW_IF_NOT_FMT(
             i0 + n - 1 < this->ntotal,
+#if defined(__APPLE__) && defined(__MACH__)
+            "max index requested (%lld) out of bounds (ntotal %lld)",
+#else
             "max index requested (%zu) out of bounds (ntotal %zu)",
+#endif
             i0 + n - 1,
             this->ntotal);
     FAISS_THROW_IF_NOT_FMT(
             n <= (Index::idx_t)std::numeric_limits<int>::max(),
+#if defined(__APPLE__) && defined(__MACH__)
+            "number of vectors requested (%lld) must be less than %lld",
+#else
             "number of vectors requested (%zu) must be less than %zu",
+#endif
             n,
             (Index::idx_t)std::numeric_limits<int>::max());
     auto stream = resources_->getDefaultStream(config_.device);

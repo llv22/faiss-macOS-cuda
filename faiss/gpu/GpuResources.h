@@ -6,7 +6,9 @@
  */
 
 #pragma once
-
+#if __cplusplus < 201402L
+#include <unordered_map>
+#endif
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 #include <faiss/impl/FaissAssert.h>

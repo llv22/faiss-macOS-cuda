@@ -33,9 +33,19 @@ constexpr size_t k8GiBTempMem = (size_t)1024 * 1024 * 1024;
 // Maximum temporary memory allocation for all GPUs
 constexpr size_t kMaxTempMem = (size_t)1536 * 1024 * 1024;
 
+// See: reference in https://stackoverflow.com/questions/18837857/cant-use-enum-class-as-unordered-map-key for how to solve the issue with clang 10.0.0 with enum class in unsorted_map
+struct EnumClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+        return static_cast<std::size_t>(t);
+    }
+};
+
 std::string allocsToString(const std::unordered_map<void*, AllocRequest>& map) {
     // Produce a sorted list of all outstanding allocations by type
-    std::unordered_map<AllocType, std::pair<int, size_t>> stats;
+    std::unordered_map<AllocType, std::pair<int, size_t>, EnumClassHash> stats;
 
     for (auto& entry : map) {
         auto& a = entry.second;
